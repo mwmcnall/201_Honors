@@ -1,0 +1,31 @@
+
+Phase one:
+  ✔ Look up unit testing in C++ @done(2020-02-09 15:10) @project(Phase one)
+    ✔ Write a simple unit test to test out methods for Creature @done(2020-02-09 15:10) @project(Phase one)
+  ✔ Attack_Target() @done(2020-02-23 14:28) @project(Phase one)
+    ✔ Does it take in a turn id? Or just @done(2020-02-23 14:28) @project(Phase one)
+    Should Creatures have a target variable and a way to set the target?
+    Yes, there should be a private variable creature
+  ✔ Initializing text files @done(2020-02-24 09:05) @project(Phase one)
+    ✔ Check if file exists @done(2020-02-24 09:05) @project(Phase one)
+      ✔ Create file if not exists @done(2020-02-24 09:05) @project(Phase one)
+      ✔ Create file with headers @done(2020-02-24 09:05) @project(Phase one)
+  ✔ Create struct to deal with battle_history information @done(2020-02-24 12:33) @project(Phase one)
+  ✔ Write Update_Battle_History in Round @done(2020-02-24 14:37) @project(Phase one)
+  ✔ Write Set_Current_Target in Round @done(2020-02-24 14:42) @project(Phase one)
+    ✔ Create a target variable that's a Creature pointer @done(2020-02-24 14:42) @project(Phase one)
+  ✔ Create Battle_Result struct @done(2020-02-24 14:44) @project(Phase one)
+  ✔ Write Update_Battle_Result  @done(2020-02-24 15:29) @project(Phase one)
+  ☐ Write a Unit Test to check writing information to a temporary file (for Round specifically)
+  ✔ The easiest way to handle this is in the Round Constructor you just read the files ONCE and then reference that value for the uptime @done(2020-02-24 15:29) @project(Phase one)
+  ✔ Make filename file_name consistent in Round @done(2020-02-24 15:29) @project(Phase one)
+  ✔ Write Target_Defeated @done(2020-02-25 11:52) @project(Phase one)
+  ✔ Write Remove_Participant @done(2020-02-25 11:52) @project(Phase one)
+  ✔ Write End_Condition @done(2020-02-25 12:31) @project(Phase one)
+  ✔ Make sure turn is private @done(2020-02-25 12:31) @project(Phase one)
+  ✔ Make sure AI_Turn deals with pointers for b_h @done(2020-02-25 12:36) @project(Phase one)
+  ✔ Make sure victor is private @done(2020-02-25 12:36) @project(Phase one)
+  ✔ Instantiate participant_heroes @done(2020-02-25 12:15) @project(Phase one)
+  ✔ Instantiate participant_enemies @done(2020-02-25 12:15) @project(Phase one)
+  ☐ Organize Round.h and .cpp
+  ☐ Round.cpp line 303, make sure that logic is correct

@@ -1,0 +1,5 @@
+﻿  Creature.cpp
+  Weapon.cpp
+  Generating Code...
+C:\Users\Wes\Documents\CS201\201R-Spring-2020\Wes_McNall\201_Honors\201_Honors\Creature.cpp(132): warning C4172: returning address of local variable or temporary: b_h
+  201_Honors.vcxproj -> C:\Users\Wes\Documents\CS201\201R-Spring-2020\Wes_McNall\201_Honors\Debug\201_Honors.exe
