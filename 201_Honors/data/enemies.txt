@@ -1,0 +1,5 @@
+id,name,hit_perc,hp,attack,defense,mag_defense,eva_perc,exp,gil,hits
+1,IMP,85,8,6,4,8,3,6,6,1
+2,GrIMP,86,16,8,6,12,5,18,18,1
+3,WOLF,86,20,8,0,14,18,24,6,1
+4,MADPONY,92,64,10,2,20,11,63,15,2

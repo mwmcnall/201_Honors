@@ -13,17 +13,20 @@ class Hero :
 	public Creature {
 
 private: // Variables
-	std::vector<bool> job_class_vec = {false, false, false, false, false, false, false, false, false, false, false, false};
+	// Vector for job class checking
+	std::vector<bool> job_class_vec = {false, false, false, false, false, false, false, 
+		false, false, false, false, false};
 
 	// The exp table to determine levels is the same for every Job Class, so it can be static
 	static const std::vector<unsigned int> expTable;
+	// Stats for Hero
 	unsigned int str, agi, inte, vit, luck, eva, lvl;
 
 private: // Methods
 	unsigned int Attack_Formula();
 	void Level_Up();
 	bool If_Level();
-	void Gain_EXP(int exp_amount);
+	void Gain_EXP(int exp_amount) { this->exp += exp_amount; }
 
 public: // Variables
 	// const static enum for job class
@@ -46,7 +49,7 @@ public: // Methods
 		unsigned int p_luck, unsigned int p_eva, int p_job);
 
 	//void Set_Battle(Battle battle);
-	Battle_History* AI_Turn();
+	Battle_History* AI_Turn(Round*) override;
 
 	// Get / Set Methods
 	unsigned int Get_Str() { return str; }

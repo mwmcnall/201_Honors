@@ -144,15 +144,21 @@
     <ClCompile Include="Battle.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Creature.cpp" />
+    <ClCompile Include="Encounter_Generator.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Enemy_Generator.cpp" />
     <ClCompile Include="Equipment.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Generator.cpp" />
     <ClCompile Include="Hero.cpp" />
+    <ClCompile Include="Hero_Generator.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Job_Class.cpp" />
     <ClCompile Include="Party.cpp" />
+    <ClCompile Include="Party_Generator.cpp" />
     <ClCompile Include="Round.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="String_Helper.cpp" />
     <ClCompile Include="Turn.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
@@ -162,14 +168,20 @@
     <ClInclude Include="Battle.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Creature.h" />
+    <ClInclude Include="Encounter_Generator.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Enemy_Generator.h" />
     <ClInclude Include="Equipment.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Generator.h" />
     <ClInclude Include="Hero.h" />
+    <ClInclude Include="Hero_Generator.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Job_Class.h" />
     <ClInclude Include="Party.h" />
+    <ClInclude Include="Party_Generator.h" />
     <ClInclude Include="Round.h" />
+    <ClInclude Include="String_Helper.h" />
     <ClInclude Include="Turn.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
