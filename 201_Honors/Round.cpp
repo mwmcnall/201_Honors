@@ -26,7 +26,8 @@ bool Round::Create_File_If_Not_Exists(const std::string file_name) {
 }
 
 // If the file hasn't been created yet, create it with the data columns in .csv format
-void Round::Initialize_Data_File_Columns(const std::string file_name, const std::vector<std::string> file_cols) {
+void Round::Initialize_Data_File_Columns(const std::string file_name, 
+    const std::vector<std::string> file_cols) {
 
     bool created;
     std::ofstream outFS;
@@ -104,7 +105,6 @@ void Round::Initialize_Round() {
     // Initialize participant_enemies / participant_heroes
     participant_enemies = Subset_Enemies();
     participant_heroes = Subset_Heroes();
-
 }
 
 // Deafult Constructor
@@ -115,14 +115,14 @@ Round::Round()
     Initialize_Round();
 }
 
-// Argument Constructor
-Round::Round(unsigned int pRounds, std::vector<Creature*> participants)
-	: rounds(pRounds), participants(participants){
+// Valued Constructor
+Round::Round(std::vector<Creature*> participants)
+	: rounds(1), participants(participants){
     Initialize_Round();
 }
 
 // https://www.sanfoundry.com/cpp-program-count-lines-in-file/
-// Helper function, not in header as I don't expect to reuse it anywhere else
+// Helper function, not in Round.h as I don't expect to reuse it anywhere else
 unsigned int Get_File_Line_Count(const std::string file_name) {
     int count = 0;
     std::string line;
@@ -141,6 +141,7 @@ std::string Get_Last_Line_Of_File(const std::string file_name) {
     std::ifstream read(file_name, std::ios_base::ate);//open file
     std::string tmp;
     int length = 0;
+    int return_count = 0;
 
     char c = '\0';
 
@@ -154,13 +155,18 @@ std::string Get_Last_Line_Of_File(const std::string file_name) {
         {
             read.seekg(i);
             c = read.get();
-            if (c == '\r' || c == '\n')//new line?
-                break;
+            if (c == '\r' || c == '\n') {
+                return_count++;
+                if (return_count >= 2)
+                    break;
+            }
         }
 
         std::getline(read, tmp);//read last line
         return tmp;
     }
+
+    return "";
 }
 
 // Gets the current ID entry from a particular file to store
@@ -179,7 +185,7 @@ unsigned int Round::Get_Data_Entry_ID(std::string file_name) {
         ss << last_line;
         int temp;
         ss >> temp;
-        return temp;
+        return temp + 1;
     }
 
 }
@@ -196,41 +202,11 @@ void Round::Update_Battle_History(Battle_History* b_h) {
     outFS << this->b_h_id<< ",";
     outFS << b_h->round << ",";
     outFS << b_h->turn << ",";
+    outFS << b_h->turn_id << ",";
     outFS << b_h->self_name << ",";
     outFS << b_h->target_name << ",";
     outFS << b_h->attack_type << ",";
     outFS << b_h->action_result << std::endl;
-
-    // Close file
-    outFS.close();
-
-    return;
-}
-
-// Writes a given string vector to an output file stream
-void Round:: Write_Vector_To_File(std::ofstream& outFS, std::vector<std::string> vec) {
-    for (int i = 0; i < static_cast<int>(vec.size()); i++) {
-        outFS << vec.at(i) << " ";
-    }
-
-    outFS << ",";
-}
-
-// Writes new information to battle_result.txt
-void Round::Update_Battle_Result(Battle_Result* b_r) {
-
-    // Open file
-    std::ofstream outFS;
-    std::string file_path = "./data/battle_result.txt";
-    outFS.open(file_path, std::ofstream::out | std::ofstream::app);
-
-    // Add new information to file
-    Write_Vector_To_File(outFS, b_r->enemy_names);
-    Write_Vector_To_File(outFS, b_r->hero_names);
-    outFS << b_r->round_tot << ",";
-    outFS << b_r->turn_tot << ",";
-    outFS << b_r->victor << ",";
-    outFS << b_r->hp_loss_victor << ",";
 
     // Close file
     outFS.close();
@@ -249,7 +225,7 @@ bool Round::Target_Defeated() {
 }
 
 // Removes a Creature* from a given vector
-void Round::Remove_Creature_From_Vector(std::vector<Creature*> vec) {
+void Round::Remove_Creature_From_Vector(std::vector<Creature*>& vec) {
     for (int i = 0; i < static_cast<int>(vec.size()); i++) {
         if (target == vec.at(i)) {
             vec.erase(vec.begin() + i);
@@ -257,10 +233,21 @@ void Round::Remove_Creature_From_Vector(std::vector<Creature*> vec) {
     }
 }
 
+// Removes the target's turn id from the participant_ID vector
+void Round::Remove_Participant_ID() {
+    for (int i = 0; i < static_cast<int>(participant_IDs.size()); i++) {
+        if (target->turn_ID == participant_IDs.at(i)) {
+            participant_IDs.erase(participant_IDs.begin() + i);
+        }
+    }
+    return;
+}
+
 // If target is dead, remove from corresponding vectors
 void Round::Remove_Participant() {
 
     Remove_Creature_From_Vector(participants);
+    Remove_Participant_ID();
 
     // Remove Hero
     if (target->turn_ID >= 80) {
@@ -292,21 +279,36 @@ bool Round::End_Condition() {
         return false;
 }
 
+// Returns the index of a turn id within participant_IDs
+int Round::Index_Of_Turn_ID(int value) {
+    int index = 0;
+    for (int turn_id : this->participant_IDs) {
+        if (value == turn_id)
+            return index;
+        index++;
+    }
+    // Not found
+    return -1;
+}
+
 // Logic for a single round of combat
-bool Round::Battle_Round() {
-	
+bool Round::Battle_Round(std::vector<Battle_History*>& turn_results) {
+
     // Loop through turn_IDs, this represents the turn order
-    for (unsigned int itr : turn_IDs){
+    for (unsigned int itr : this->turn_IDs){
         // If the current turn_ID is alive and in battle, then have them go
         if (std::find(participant_IDs.begin(), participant_IDs.end(), itr) != participant_IDs.end()) {
             // Grab class associated with current turn ID
-            // I really don't think this logic is correct
-            Creature* turn_class = participants.at(itr);
+            Creature* turn_class = participants.at(Index_Of_Turn_ID(itr));
             // Run AI turn, this will trigger either Enemy or Hero's override of AI_Turn
-            Battle_History* b_h = turn_class->AI_Turn();
+            Battle_History* b_h = turn_class->AI_Turn(this);
+            // Update turn that just happened in the master list to reference later
+            turn_results.push_back(b_h);
+            // Write turn to file
             Update_Battle_History(b_h);
             // Set current target
-            this->Set_Current_Target(turn_class);
+            this->Set_Current_Target(b_h->target);
+            
             // If target was defeated after turn
             if (this->Target_Defeated()) {
                 this->Remove_Participant();
@@ -320,4 +322,16 @@ bool Round::Battle_Round() {
 
     }
 
+    return true;
+
+}
+
+// Returns Creature pointer from participants based on turn id
+Creature* Round::Participant_From_ID(unsigned int target_id) {
+    for (int i = 0; i < static_cast<int>(participants.size()); i++) {
+        // If current turn ID is in participants_ID, meaning they are part of the battle
+        if (participants.at(i)->turn_ID == target_id) {
+            return participants.at(i);
+        }
+    }
 }

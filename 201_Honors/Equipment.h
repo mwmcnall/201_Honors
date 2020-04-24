@@ -10,6 +10,6 @@ protected:
 	// TODO: const static enum for job class
 public:
 	Equipment();
-	void Change_Equipment(Creature target);
+	void Change_Equipment(Creature* target);
 };
 #endif

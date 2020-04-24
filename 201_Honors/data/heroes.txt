@@ -1,0 +1,7 @@
+name,hit_perc,hp,mag_defense,str,agi,inte,vit,luck,job
+Fighter,10,35,15,20,5,1,10,5,0
+Black_Belt,5,33,10,5,5,5,20,5,1
+Thief,5,30,15,5,10,5,5,15,2
+Red_Mage,7,30,20,10,10,10,5,5,3
+White_Mage,5,28,15,5,5,15,10,5,4
+Black_Mage,5,25,20,1,10,20,1,10,5

@@ -1,6 +1,9 @@
 
-#include "Hero.h"
-#include "Enemy.h"
+#include "Encounter_Generator.h"
+#include "Party_Generator.h"
+#include "Enemy_Generator.h"
+#include "Hero_Generator.h"
+#include "Battle.h"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -9,14 +12,14 @@
 #include <time.h>
 using namespace std;
 
-
-void turn_order(vector<int>& turn_ids) {
-    for (int i = 0; i < 17; i++) {
-        //swap_positions(turn_ids, rand() % 13, rand() % 13);
-    }
+// Returns a combined vector of two separate Creature* vectors
+vector<Creature*> Combine_Creatures(vector<Creature*> v1, vector<Creature*> v2) {
+    v1.insert(v1.end(), v2.begin(), v2.end());
+    return v1;
 }
 
 // https://www.techiedelight.com/print-vector-cpp/
+// Output the contents of an int vector, for debugging
 void print(vector<int> const& input) {
     copy(input.begin(),
         input.end(),
@@ -24,25 +27,36 @@ void print(vector<int> const& input) {
     cout << endl;
 }
 
+const int SIM_NUMBER = 10;
+const string LOCATION = "North of Coneria";
 
 int main(int argc, char** argv) {
 
-    Round round;
+    // Set random seed
+    srand(time(NULL));
 
-    /*
-    std::string test_string = "Imp";
-    int test_hit_perc = 85;
-    unsigned int testHP = 8, test_attack = 6, test_defense = 4, test_mag_defense = 8,
-        test_eva_perc = 3, test_exp = 6, test_turn_id = 0, test_eva = 0,
-        test_acc = 0, test_gil = 6;
-    Enemy enemy(test_string, test_hit_perc, testHP, test_attack, test_defense,
-        test_mag_defense, test_eva_perc, test_exp, test_turn_id, test_eva,
-        test_acc, test_gil);
+    // Simulate a number of battles
+    for (int i = 0; i < SIM_NUMBER; i++) {
+        // Create Party and Encounter generators
+        Party_Generator* Party_Gen = new Party_Generator();
+        Encounter_Generator* Enc_Gen = new Encounter_Generator();
 
-    cout << enemy.name << endl;
+        // Instantiate party and encounter
+        vector<Creature*> party = Party_Gen->Create_Party("Fighter", "Black_Belt",
+            "White_Mage", "Black_Mage");
+        vector<Creature*> encounter = Enc_Gen->Spawn_Encounter(LOCATION);
 
-    */
+        // Instantiate a battle complete with all Heroes and Enemies
+        Battle battle(Combine_Creatures(party, encounter));
+        // Simulate battle
+        battle.Start_Battle();
 
+        // Clear to reset
+        encounter.clear();
+        delete Party_Gen;
+        delete Enc_Gen;
+    }
+    
 	return 0;
 }
 

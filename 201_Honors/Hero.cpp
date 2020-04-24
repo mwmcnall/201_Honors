@@ -3,7 +3,7 @@
 #include <iostream>
 #include <algorithm>
 
-// definition of static const variable
+// All classes have the same exp level breakpoints 
 const std::vector<unsigned int> Hero::expTable = {40, 196, 547, 1171, 2146, 3550, 5461, 7957, 11116,
         15016, 19735, 25351, 31942, 39586, 48361, 58345, 69617, 82253, 96332,
         111932, 129131, 148008, 168639, 191103, 215479, 241843, 270275, 300851,
@@ -27,6 +27,7 @@ Hero::Hero(std::string p_name, unsigned int p_hitPerc,
         this->attack = Attack_Formula();
     }
 
+// Sets value of attack for Hero, this is based on stats AND equipped weapon
 unsigned int Hero::Attack_Formula() {
 
     unsigned int attack = 0;
@@ -48,9 +49,7 @@ unsigned int Hero::Attack_Formula() {
     return attack;
 }
 
-/*
-    Checks whether or not Hero is ready to level up
-*/
+// Returns true if hero is ready to level
 bool Hero::If_Level() {
     if (this->exp > expTable.at(this->lvl - 1)) {
         return true;
@@ -59,10 +58,23 @@ bool Hero::If_Level() {
     return false;
 }
 
-/*
-    Levels Hero
-*/
+// Levels Hero
 void Hero::Level_Up() {
     this->Set_Lvl(this->Get_Lvl() + 1);
     // TODO: Depending on the job class increase different statistics
+}
+
+// AI Turn for hero
+Battle_History* Hero::AI_Turn(Round* round) {
+
+    // Get the target of the first monster in the battle
+    Creature* target = round->participant_enemies.at(0);
+
+    unsigned int damage = this->Attack_Target(target);
+
+    // TODO: Currently only 'attack' is implemented
+    Battle_History* b_h = new Battle_History{ round->Get_Rounds(), round->Get_Turn(),
+        this->turn_ID, this->name, target->name, "attack", damage, target };
+
+    return b_h;
 }

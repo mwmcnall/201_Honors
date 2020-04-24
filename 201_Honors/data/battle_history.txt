@@ -1,1 +1,0 @@
-b_h_id,round_num,turn_num,self_name,target_name,action,action_result

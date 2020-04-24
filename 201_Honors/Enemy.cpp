@@ -3,16 +3,17 @@
 #include <cstdlib>
 
 // Default Constructor
-Enemy::Enemy() : Creature(), eva(0), acc(0), gil(0){}
+Enemy::Enemy() : Creature(), id(-1), gil(0), hits(0){}
 
 // Variable Constructor
-Enemy::Enemy(std::string p_name, unsigned int p_hitPerc,
+Enemy::Enemy(std::string p_name, unsigned int p_hitPerc, unsigned int p_id,
     unsigned int p_hp, unsigned int p_attack, unsigned int p_defense, unsigned int p_mag_defense,
     unsigned int p_eva_perc, unsigned int p_exp, unsigned int p_turn_id,
-    unsigned int p_eva, unsigned int p_acc, unsigned int p_gil)
+    unsigned int p_gil, unsigned int p_hits)
     : Creature(p_name, p_hitPerc, p_hp, p_attack, p_defense, p_mag_defense,
-               p_eva_perc, p_exp, p_turn_id), eva(p_eva), acc(p_acc), gil(p_gil) {}
+               p_eva_perc, p_exp, p_turn_id), id(p_id), gil(p_gil), hits(p_hits) {}
 
+// Returns which Hero ID to attack based on slot number
 unsigned int Enemy::Target_Slot(unsigned int slot) {
     if (slot <= 4)
         return 80;
@@ -23,7 +24,8 @@ unsigned int Enemy::Target_Slot(unsigned int slot) {
     return 83;
 }
 
-unsigned int Enemy::Choose_Target() {
+// Returns Hero target id to target
+unsigned int Enemy::Choose_Target(Round* round) {
     // Generates a number 1-8, this determines that enemy's target
     int rand_target;
     unsigned int target_id;
@@ -32,29 +34,28 @@ unsigned int Enemy::Choose_Target() {
         rand_target = (rand() % 8) + 1;
         target_id = Target_Slot(rand_target);
         // if target_id is in battle
-        if (std::find(battle->participant_IDs.begin(), battle->participant_IDs.end(), target_id) != battle->participant_IDs.end()) {
-
+        if (std::find(round->participant_IDs.begin(), round->participant_IDs.end(), target_id) != round->participant_IDs.end()) {
+            return target_id;
         }
-        // TODO: Check if target_id is in the battle
         // If so, return that target id
         // Otherwise keep generating Ids
     }
 }
 
-Battle_History* Enemy::AI_Turn() {
+// Run enemy AI
+Battle_History* Enemy::AI_Turn(Round* round){
 
     // Get target id and actual target
-    unsigned int target_id = Choose_Target();
-    Creature* target = battle->Participant_From_ID(target_id);
+    unsigned int target_id = Choose_Target(round);
+    Creature* target = round->Participant_From_ID(target_id);
 
     unsigned int damage = this->Attack_Target(target);
 
     // TODO: Currently only 'attack' is implemented
-    Battle_History b_h = { battle->rounds, battle->Get_Turn(),
-        this->name, target->name, "attack", damage };
+    Battle_History* b_h = new Battle_History{ round->Get_Rounds(), round->Get_Turn(),
+        this->turn_ID, this->name, target->name, "attack", damage, target };
 
-    // TODO: Check scope of this, see if the data of b_h disappears upon runnings
-    return &b_h;
+    return b_h;
 
     /*
     # TODO: Determine if enemy runs
@@ -80,6 +81,6 @@ Battle_History* Enemy::AI_Turn() {
     return {k:v for (k,v) in zip(battle._battle_history_cols,
         [battle.rounds, battle.turn, self.name, target.name, 'attack',
         damage])}, target.turn_id
-    
+
     */
 }

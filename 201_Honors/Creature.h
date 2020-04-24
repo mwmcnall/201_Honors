@@ -1,9 +1,13 @@
 #ifndef CREATURE_H
 #define CREATURE_H
-//#include "Battle.h"
 #include <cstdlib>
 #include <vector>
 #include <string>
+
+// Declared for use with struct, defined below
+class Creature;
+// Declared here to allow compile, attempting to include will cause error for circular inclusion
+class Round;
 
 /*
   This struct allows me to have a function that returns all of these items
@@ -11,26 +15,15 @@
   Each data type matches a column header of the battle_history.txt file
 */
 struct Battle_History {
-	unsigned int round, turn;
+	unsigned int round, turn, turn_id;
 	std::string self_name, target_name, attack_type;
 	unsigned int action_result;
+	Creature* target;
 };
-
-struct Battle_Result {
-	std::vector<std::string> enemy_names, hero_names;
-	int round_tot, turn_tot;
-	std::string victor;
-	int hp_loss_victor;
-};
-
-// Class declaration, allows Creature and Round to use each other's types and wait for definition
-// to appear during compile
-class Battle;
 
 class Creature {
 
 private: // Variables
-	// There is only one active battle for any enemy / Hero, so this can be static on creature and set once
 	static const int BASE_HIT_CHANCE = 168;
 	unsigned int max_HP;
 
@@ -40,7 +33,7 @@ private: // Methods
 	void Initialize_Resist();	
 
 protected:
-	Battle* battle;
+	Round* battle;
 
 public: // Variables
 	std::string name;
@@ -53,7 +46,7 @@ public: // Variables
 	};
 	static Statuses statuses;
 	// TODO: static const ai = ai
-
+	// For whether or not the creature has that resist or is afflicted with a status
 	std::vector<bool> resist, status;
 	
 public: // Methods
@@ -71,12 +64,11 @@ public: // Methods
 	int Roll_Hit(Creature* target);
 	bool Return_Hit_Bool(Creature* target, bool attack_command = true);
 	int Attack_Target(Creature* target);
-	void Lower_HP(const int health_minus);
 	void Gain_HP(const int health_plus);
 	void Use_Spell();
 	bool If_Dead();
 	// Meant to be overwritten by the interhited type
-	Battle_History* AI_Turn();
+	virtual Battle_History* AI_Turn(Round* round) = 0;
 	// TODO: Look up how to set a bool vector using an enum value
 
 	// Get / Set Methods

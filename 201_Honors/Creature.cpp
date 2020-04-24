@@ -5,12 +5,24 @@
 #include <algorithm>
 #include <cstdlib>
 
-//std::vector<bool> resist, status;
-
+// Default setup for Creature, separated for simple debugging
 void Creature::Initialize_Creature() {
 	max_HP = hp;
 	Initialize_Status();
 	Initialize_Resist();
+}
+
+// Initialize status vector
+void Creature::Initialize_Status() {
+	for (int i = 0; i < NR_STATUSES; i++)
+		status.push_back(0);
+	return;
+}
+
+// Initialize resist vector
+void Creature::Initialize_Resist() {
+	std::vector<bool> resist;
+	return;
 }
 
 // Default Constructor
@@ -21,6 +33,7 @@ Creature::Creature() :
 	Initialize_Creature();
 }
 
+// Valued Creature
 Creature::Creature(std::string p_name, unsigned int p_hitPerc,
 	unsigned int p_hp, unsigned int p_attack, unsigned int p_defense, unsigned int p_mag_defense,
 	unsigned int p_eva_perc, unsigned int p_exp, unsigned int p_turn_id)
@@ -31,16 +44,19 @@ Creature::Creature(std::string p_name, unsigned int p_hitPerc,
 
 }
 
-
+// Returns a random float between 0 and 1
 float Creature::Rand_Zero_One() {
 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 }
 
+// Damages creature instance
 void Creature::Target_Damage(unsigned int damage) {
 	this->hp -= damage;
 	return;
 }
 
+// Calculates the roll to hit
+// TODO: Will probably want to treat as virtual and override in Hero / Enemy
 int Creature::Roll_Hit(Creature* target) {
 	int hitRoll = BASE_HIT_CHANCE;
 	if (status[blind])
@@ -63,6 +79,8 @@ int Creature::Roll_Hit(Creature* target) {
 
 }
 
+// Returns true if current Creature can hit target
+// TODO: Only works with attack command currently
 bool Creature::Return_Hit_Bool(Creature* target, bool attack_command) {
 	
 	int hitRoll = Roll_Hit(target);
@@ -80,13 +98,20 @@ bool Creature::Return_Hit_Bool(Creature* target, bool attack_command) {
 
 }
 
+// Roll damage and hit target
 int Creature::Attack_Target(Creature* target) {
-	// Roll damage and hit target
 
 	double damage = 0;
 
 	if (this->Return_Hit_Bool(target)) {
 		// 1 is the minimum damage
+		/*
+		Debug variables
+		double rand_roll = Rand_Zero_One();
+		double roll_2 = Rand_Zero_One() * static_cast<double>(this->attack);
+		double roll_3 = floor(roll_2);
+		double roll_4 = roll_3 - target->defense;
+		*/
 		double first_val = floor(Rand_Zero_One() * static_cast<double>(this->attack)) - target->defense;
 		damage = fmax(first_val, 1.0);
 		target->Target_Damage(static_cast<unsigned int>(damage));
@@ -95,39 +120,21 @@ int Creature::Attack_Target(Creature* target) {
 	return 0;
 }
 
-void Creature::Lower_HP(const int health_minus) {
-	hp -= health_minus;
-	return;
-}
-
+// Heal current Creature
 void Creature::Gain_HP(const int health_plus) {
-	hp += health_plus;
+	this->hp += health_plus;
 	return;
 }
 
+// To be fleshed out once Spells are implemented
 void Creature::Use_Spell() {
 	return;
 }
 
+// returns true if Creature is dead, false if alive
 bool Creature::If_Dead() {
 	// Checks if hp underflowed
 	if (hp > max_HP)
 		return true;
 	return false;
-}
-
-void Creature::Initialize_Status() {
-	for (int i = 0; i < NR_STATUSES; i++)
-		status.push_back(0);
-	return;
-}
-
-void Creature::Initialize_Resist() {
-	std::vector<bool> resist;
-	return;
-}
-
-Battle_History* Creature::AI_Turn() {
-	Battle_History b_h;
-	return &b_h;
 }
